@@ -4,50 +4,49 @@
 #include <unistd.h>
 
 int main(void) {
-    char input_buffer[100];
-    char nano[100];
-    char note_name[100];
-    printf("NEW NOTE: 1\n");
-    printf("OPEN NOTE: 2\n");
-    printf("DELETE NOTE: 3\n");
+    char buffer[1024];
+    char nano[1024];
+    char noteName[1024];
+
+    puts("NEW NOTE 1\n" "OPEN NOTE: 2\n" "DELETE NOTE: 3");
     printf("Enter A Number: ");
-    if (fgets(input_buffer, sizeof(input_buffer), stdin) != NULL) {
-        int menu_input = atoi(input_buffer);
-        switch (menu_input) {
+    if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
+        switch (atoi(buffer)) {
             case 1:
                 printf("What do you want to call the note: ");
-                if (fgets(note_name, 100, stdin) != NULL) {
-                    note_name[strcspn(note_name, "\n")] = '\0';
+                if (fgets(noteName, 100, stdin) != NULL) {
+                    noteName[strcspn(noteName, "\n")] = '\0';
                 }
-                sprintf(nano, "nano %s", note_name);
+                snprintf(nano, sizeof(nano), "nano %s", noteName);
                 system(nano);
                 break;
             case 2:
                 printf("What note would you like to open: ");
-                if (fgets(note_name, 100, stdin) != NULL) {
-                    note_name[strcspn(note_name, "\n")] = '\0';
+                if (fgets(noteName, 100, stdin) != NULL) {
+                    noteName[strcspn(noteName, "\n")] = '\0';
                 }
-                if (access(note_name, F_OK) != 0) {
-                    printf("File does not exist!\n");
+                snprintf(nano, sizeof(nano), "%s", noteName);
+                if (access(noteName, F_OK) != 0) {
+                    fputs("This file does not exist!", stderr);
                 } else {
-                    snprintf(nano, sizeof(nano), "nano %s", note_name);
+                    snprintf(nano, sizeof(nano), "nano %s", noteName);
                     system(nano);
                 }
                 break;
             case 3:
-                printf("What note would you like to delete: ");
-                if (fgets(note_name, 100, stdin) != NULL) {
-                    note_name[strcspn(note_name, "\n")] = '\0';
+                printf("What note would you like to delete:");
+                if (fgets(noteName, 100, stdin) != NULL) {
+                    noteName[strcspn(noteName, "\n")] = '\0';
                 }
-                if (access(note_name, F_OK) != 0) {
-                    printf("This file does not exist!\n"); 
+                if (access(noteName, F_OK) != 0) {
+                    fputs("This file does not exist!\n", stderr); 
                 } else {
-                    remove(note_name);
+                    remove(noteName);
                 }
                 break;
             default:
+                fputs("Invalid number!", stderr);
                 return EXIT_FAILURE;
-                break;
         }
     }
     return EXIT_SUCCESS;
